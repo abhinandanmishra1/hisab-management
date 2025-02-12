@@ -1,52 +1,48 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Group, User } from "@/types";
 import { Plus, Search, Users, X } from "lucide-react";
-import React, { useState } from 'react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React, { useMemo, useState } from 'react';
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "@/types";
+import { MultiSelect } from "./ui/multiselect";
+import { createGroup } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
 interface CreateGroupFormProps {
   users?: User[];
+  groups?: Group[];
 }
 
-const GroupManagement = ({ users = [] }: CreateGroupFormProps) => {
+const GroupManagement = ({ users = [], groups = [] }: CreateGroupFormProps) => {
   const router = useRouter();
+  console.log(users)
   const [groupName, setGroupName] = useState("");
-  const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [searchValue, setSearchValue] = useState("");
 
+  const userIdToUserMap = useMemo(() => {
+    return users.reduce((map, user) => {
+      map[user.id] = user;
+      return map;
+    }, {} as Record<string, User>);
+  }, [users]);
   // Sample groups data - replace with actual data
-  const [groups] = useState([
-    { id: '1', name: 'Family Trip', members: 4 },
-    { id: '2', name: 'Office Team', members: 6 },
-    { id: '3', name: 'Weekend Party', members: 3 },
-  ]);
+  // const [groups] = useState([
+  //   { id: '1', name: 'Family Trip', members: 4 },
+  //   { id: '2', name: 'Office Team', members: 6 },
+  //   { id: '3', name: 'Weekend Party', members: 3 },
+  // ]);
 
-  const availableUsers = users.filter(
-    user => !selectedMembers.some(selected => selected.id === user.id)
-  );
-
-  const handleSelectUser = (userId: string) => {
-    const user = users.find(u => u.id === userId);
-    if (user && !selectedMembers.some(m => m.id === user.id)) {
-      setSelectedMembers(prev => [...prev, user]);
-    }
+  const handleSelectUser = (users: string[]) => {
+   setSelectedMembers(users);
   };
 
   const removeMember = (id: string) => {
-    setSelectedMembers(prev => prev.filter(m => m.id !== id));
+    setSelectedMembers(prev => prev.filter(m => m !== id));
   };
 
   const handleCreateGroup = async () => {
@@ -54,12 +50,18 @@ const GroupManagement = ({ users = [] }: CreateGroupFormProps) => {
 
     const newGroup = {
       name: groupName.trim(),
-      members: selectedMembers.map(m => m.id),
+      members: selectedMembers,
     };
 
     // Add your group creation logic here
-    console.log('Creating group:', newGroup);
-    router.push(`/groups/${newGroup.name}`);
+    try {
+      const data = await createGroup(newGroup);
+    console.log('Creating group:', data);
+    // router.push(`/groups/${data.}`);
+    // router.push(`/groups/${newGroup.name}`);
+    }catch(err) {
+      console.error('Error creating group:', err);
+    }
   };
 
   return (
@@ -87,29 +89,22 @@ const GroupManagement = ({ users = [] }: CreateGroupFormProps) => {
 
             <div className="space-y-2">
               <Label>Add Members</Label>
-              <Select onValueChange={handleSelectUser}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a member" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableUsers.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      {user.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MultiSelect 
+                onValueChange={handleSelectUser}
+                options={users?.map(user => ({ label: user.name, value: user.id }))}
+                value={selectedMembers}
+              />
             </div>
 
             <div className="flex flex-wrap gap-2 mt-2">
-              {selectedMembers.map((member) => (
+              {selectedMembers.map((memberId) => (
                 <div
-                  key={member.id}
+                  key={memberId}
                   className="flex items-center gap-2 bg-secondary text-secondary-foreground px-3 py-1 rounded-full"
                 >
-                  <span>{member.name}</span>
+                  <span>{userIdToUserMap[memberId]?.name}</span>
                   <button
-                    onClick={() => removeMember(member.id)}
+                    onClick={() => removeMember(memberId)}
                     className="text-secondary-foreground/50 hover:text-secondary-foreground"
                   >
                     <X className="h-4 w-4" />
@@ -169,7 +164,7 @@ const GroupManagement = ({ users = [] }: CreateGroupFormProps) => {
                         <span className="font-medium">{group.name}</span>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {group.members} members
+                        {group.members?.length} members
                       </div>
                     </div>
                   ))}

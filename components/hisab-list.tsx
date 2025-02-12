@@ -1,15 +1,17 @@
 "use client"
 
-import type { Group } from "@/types"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import type { Group, Hisab } from "@/types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+
 import { format } from "date-fns"
 
 interface HisabListProps {
-  group: Group
+  group: Group;
+  hisabs: Hisab[]
 }
 
-export function HisabList({ group }: HisabListProps) {
+export function HisabList({ group, hisabs = [] }: HisabListProps) {
   return (
     <div className="space-y-4">
       <div className="flex gap-4">
@@ -63,12 +65,12 @@ export function HisabList({ group }: HisabListProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {group.hisabs.map((hisab) => (
+          {hisabs.map((hisab: Hisab) => (
             <TableRow key={hisab.id}>
               <TableCell>{hisab.name}</TableCell>
               <TableCell>{hisab.amount}</TableCell>
               <TableCell>{format(hisab.date, "PP")}</TableCell>
-              <TableCell>{group.members.find((m) => m.id === hisab.paidBy)?.name}</TableCell>
+              <TableCell>{hisab.paidBy.name}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -14,7 +14,10 @@ export class UserService {
   }
 
   async getAllUsers(): Promise<User[]> {
-    return await this.userModel.find().populate('groups').exec();
+    return await this.userModel
+    .find({}, { _id: 0, id: '$_id', groups: 1, name: 1, email: 1 })
+    .populate('groups')
+    .exec();
   }
 
   async getUserById(id: string): Promise<User> {

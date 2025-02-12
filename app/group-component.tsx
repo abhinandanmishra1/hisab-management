@@ -1,17 +1,22 @@
 "use client"
 
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import type { Group, Hisab } from "@/types"
 
 import { AddHisab } from "@/components/add-hisab"
 import { Button } from "@/components/ui/button"
-import type { Group } from "@/types"
 import { HisabList } from "@/components/hisab-list"
 import Link from "next/link"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 
-export default function GroupClient({ group: initialGroup }: { group: Group }) {
-  const [group, setGroup] = useState<Group>(initialGroup)
+interface GroupClientProps {
+  group: Group
+  hisabs: Hisab[]
+}
+export default function GroupClient({ group, hisabs = [] }: GroupClientProps) {
+  console.log(hisabs)
+  // const [group, setGroup] = useState<Group>(initialGroup)
   const [showAddHisab, setShowAddHisab] = useState(false)
 
   const refreshGroup = async () => {
@@ -24,7 +29,7 @@ export default function GroupClient({ group: initialGroup }: { group: Group }) {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">{group.name}</h1>
         <div className="flex gap-4">
-          <Link href={`/group/${group.id}/payments`}>
+          <Link href={`/groups/${group.id}/payments`}>
             <Button variant="outline">View Payments</Button>
           </Link>
           <Button onClick={() => setShowAddHisab(true)}>
@@ -34,7 +39,7 @@ export default function GroupClient({ group: initialGroup }: { group: Group }) {
         </div>
       </div>
 
-      <HisabList group={group} />
+      <HisabList group={group} hisabs={hisabs} />
 
       <Dialog open={showAddHisab} onOpenChange={setShowAddHisab}>
         <DialogContent className="max-w-lg">

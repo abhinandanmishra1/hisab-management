@@ -1,18 +1,20 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type { Distribution, Group, Hisab } from "@/types"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { Distribution, Group, Hisab } from "@/types"
-import { saveGroup } from "@/lib/storage"
-import { CalendarIcon } from "lucide-react"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import { createHisab } from "@/lib/api/hisab"
+import { format } from "date-fns"
+import { saveGroup } from "@/lib/storage"
+import { useState } from "react"
 
 interface AddHisabProps {
   group: Group
@@ -24,7 +26,7 @@ export function AddHisab({ group, onAdd, onClose }: AddHisabProps) {
   const [name, setName] = useState("")
   const [amount, setAmount] = useState("")
   const [date, setDate] = useState<Date>(new Date())
-  const [paidBy, setPaidBy] = useState(group.members[0].id)
+  const [paidBy, setPaidBy] = useState(group?.members[0]?.id)
   const [distributionType, setDistributionType] = useState<"equal" | "unequal">("equal")
   const [distributions, setDistributions] = useState<Distribution[]>(
     group.members.map((m) => ({ userId: m.id, amount: 0 })),
@@ -53,25 +55,22 @@ export function AddHisab({ group, onAdd, onClose }: AddHisabProps) {
       return
     }
 
-    const hisab: Hisab = {
-      id: Date.now().toString(),
+    const hisab = {
+      group: group.id,
       name: name.trim(),
       amount: Number(amount),
       date: new Date(date),
       paidBy,
-      distributionType,
       distributions,
     }
 
-    const updatedGroup = {
-      ...group,
-      hisabs: [...group.hisabs, hisab],
-    }
-
-    saveGroup(updatedGroup)
+    console.log(hisab)
+    createHisab(hisab)
     onAdd()
     onClose()
   }
+
+  console.log(group)
 
   return (
     <Card>

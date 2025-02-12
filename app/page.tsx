@@ -1,7 +1,9 @@
+import { getGroups, getUsers } from "@/lib/api";
+
 import GroupManagement from "@/components/create-group";
-import { getUsers } from "@/lib/api";
 
 export default async function CreateGroupPage() {
   const users = await getUsers(); // ✅ Fetch users on server-side
-  return <GroupManagement users={users} />;
+  const groups = await getGroups();
+  return <GroupManagement users={users} groups={groups} />;
 }

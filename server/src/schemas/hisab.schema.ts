@@ -13,3 +13,21 @@ export const HisabSchema = new Schema({
   distributions: { type: [DistributionSchema], required: true },
   group: { type: Schema.Types.ObjectId, ref: 'Group' },
 });
+
+
+HisabSchema.set('toJSON', {
+  transform: (_, ret) => {
+    ret.id = ret._id;   // Rename _id to id
+    delete ret._id;     // Optionally remove _id
+    return ret;
+  },
+});
+
+
+HisabSchema.set('toObject', {
+  transform: (_, ret) => {
+    ret.id = ret._id;   // Rename _id to id
+    delete ret._id;     // Optionally remove _id
+    return ret;
+  },
+});
