@@ -10,9 +10,9 @@ import { Navbar } from '@/components/navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Group Management App',
-  description: 'Manage your groups efficiently',
-  generator: 'v0.dev',
+  title: 'Hisab Management App',
+  description: 'Manage your hisabs efficiently',
+  generator: 'abhinandan mishra',
 }
 
 export default function RootLayout({
