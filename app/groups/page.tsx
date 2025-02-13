@@ -1,9 +1,15 @@
-import { getGroups, getUsers } from "@/lib/api";
+"use client"
 
-import GroupManagement from "@/components/create-group";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation"; // Changed from next/router
 
-export default async function CreateGroupPage() {
-//   const users = await getUsers(); // ✅ Fetch users on server-side
-//   const groups = await getGroups();
-  return <h1>No</h1>;
+export default function GroupsPage() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.push("/");
+  }, [router]);
+
+  // Return null or a loading state while redirecting
+  return null;
 }

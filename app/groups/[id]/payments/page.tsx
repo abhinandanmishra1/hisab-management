@@ -1,46 +1,26 @@
-"use client"
+import { getGroupById, getHisabsByGroupId } from "@/lib/api";
 
-import { useEffect, useState } from "react"
-import { PaymentView } from "@/components/payment-view"
-import { getGroup } from "@/lib/storage"
-import type { Group } from "@/types"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { Card } from "@/components/ui/card";
+import PaymentsClient from "@/components/payments-client";
 
-export default function PaymentsPage({ params }: { params: { id: string } }) {
-  const [group, setGroup] = useState<Group>()
-
-  useEffect(() => {
-    const loadGroup = () => {
-      const loadedGroup = getGroup(params.id)
-      setGroup(loadedGroup)
-    }
-    loadGroup()
-  }, [params.id])
-
-  if (!group) return null
-
-  return (
-    <main className="container py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Payments - {group.name}</h1>
-        <Link href={`/group/${group.id}`}>
-          <Button variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Hisabs
-          </Button>
-        </Link>
+export default async function PaymentsPage({ params }: { params: { id: string } }) {
+  const group = await getGroupById(params.id);
+  const hisabs = await getHisabsByGroupId(params.id);
+  
+  if (!group) {
+    return (
+      <div className="container py-8">
+        <Card className="p-8 text-center">
+          <div className="flex flex-col items-center gap-4">
+            <h2 className="text-xl font-semibold text-muted-foreground">Group Not Found</h2>
+            <p className="text-sm text-muted-foreground">
+              The group you're looking for doesn't exist or you don't have access to it.
+            </p>
+          </div>
+        </Card>
       </div>
+    );
+  }
 
-      <PaymentView
-        group={group}
-        onUpdate={() => {
-          const updatedGroup = getGroup(params.id)
-          setGroup(updatedGroup)
-        }}
-      />
-    </main>
-  )
+  return <PaymentsClient group={group} hisabs={hisabs} />;
 }
-

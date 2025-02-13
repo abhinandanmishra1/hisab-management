@@ -1,7 +1,7 @@
 import { User } from "./user";
 
 export type Distribution = {
-  userId: string;
+  userId: User;
   amount: number;
 };
 

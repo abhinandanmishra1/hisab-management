@@ -26,5 +26,5 @@ export const getGroups = async () => {
 
 export const getHisabsByGroupId = async (groupId: string) => {
   const { data } = await apiClient.get(`/api/group/${groupId}/hisabs`);
-  return data;
+  return data.data;
 }
