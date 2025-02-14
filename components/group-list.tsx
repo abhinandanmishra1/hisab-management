@@ -1,11 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getGroups } from "@/lib/storage"
+import { useEffect, useState } from "react"
+
 import type { Group } from "@/types"
 import Link from "next/link"
 import { format } from "date-fns"
+import { getGroups } from "@/app/lib/storage"
 
 export function GroupList() {
   const [groups, setGroups] = useState<Group[]>([])
@@ -24,11 +25,11 @@ export function GroupList() {
             </CardHeader>
             <CardContent>
               <div className="text-sm text-muted-foreground">
-                <p>{group.members.length} Members</p>
+                {/* <p>{group.members.length} Members</p>
                 <p>{group.hisabs.length} Hisabs</p>
                 {group.hisabs.length > 0 && (
                   <p>Last updated: {format(new Date(group.hisabs[group.hisabs.length - 1].date), "PP")}</p>
-                )}
+                )} */}
               </div>
             </CardContent>
           </Card>

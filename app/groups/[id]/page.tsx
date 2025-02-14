@@ -1,4 +1,4 @@
-import { getGroupById, getHisabsByGroupId } from "@/lib/api";
+import { getGroupById, getHisabsByGroupId } from "@/app/lib/api/server";
 
 import { Card } from "@/components/ui/card";
 import GroupClient from "@/components/group-component";

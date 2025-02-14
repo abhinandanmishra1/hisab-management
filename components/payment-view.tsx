@@ -28,7 +28,7 @@ import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { saveGroup } from "@/lib/storage";
+import { saveGroup } from "@/app/lib/storage";
 
 interface PaymentViewProps {
   group: Group;

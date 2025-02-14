@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "./ui/multiselect";
-import { createGroup } from "@/lib/api";
+import { createGroup } from "@/app/lib/api/client";
 import { useRouter } from "next/navigation";
 
 interface CreateGroupFormProps {

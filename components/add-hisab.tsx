@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { Distribution, Group, Hisab } from "@/types"
+import type { Distribution, Group } from "@/types"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -10,10 +10,9 @@ import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
-import { createHisab } from "@/lib/api/hisab"
+import { cn } from "@/app/lib/utils"
+import { createHisab } from "@/app/lib/api/client"
 import { format } from "date-fns"
-import { saveGroup } from "@/lib/storage"
 import { useState } from "react"
 
 interface AddHisabProps {
@@ -29,18 +28,18 @@ export function AddHisab({ group, onAdd, onClose }: AddHisabProps) {
   const [paidBy, setPaidBy] = useState(group?.members[0]?.id)
   const [distributionType, setDistributionType] = useState<"equal" | "unequal">("equal")
   const [distributions, setDistributions] = useState<Distribution[]>(
-    group.members.map((m) => ({ userId: m.id, amount: 0 })),
+    group.members.map((m) => ({ userId: m, amount: 0 })),
   )
 
   const updateDistribution = (userId: string, amount: number) => {
-    setDistributions(distributions.map((d) => (d.userId === userId ? { ...d, amount: Number(amount) } : d)))
+    setDistributions(distributions.map((d) => (d.userId.id === userId ? { ...d, amount: Number(amount) } : d)))
   }
 
   const calculateEqualDistribution = (totalAmount: number) => {
     const perPerson = Number(totalAmount) / group.members.length
     setDistributions(
       group.members.map((m) => ({
-        userId: m.id,
+        userId: m,
         amount: Math.round((perPerson + Number.EPSILON) * 100) / 100,
       })),
     )
@@ -162,7 +161,7 @@ export function AddHisab({ group, onAdd, onClose }: AddHisabProps) {
                 <span className="w-32">{member.name}</span>
                 <Input
                   type="number"
-                  value={distributions.find((d) => d.userId === member.id)?.amount || 0}
+                  value={distributions.find((d) => d.userId.id === member.id)?.amount || 0}
                   onChange={(e) => updateDistribution(member.id, Number(e.target.value))}
                   disabled={distributionType === "equal"}
                 />

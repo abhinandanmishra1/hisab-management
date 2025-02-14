@@ -1,4 +1,4 @@
-import { getGroups, getUsers } from "@/lib/api";
+import { getGroups, getUsers } from "@/app/lib/api/server";
 
 import GroupManagement from "@/components/create-group";
 
