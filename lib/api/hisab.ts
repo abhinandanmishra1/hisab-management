@@ -1,7 +1,7 @@
 import { CreateHisabPayload } from "@/types";
 import axios from "axios";
 const apiClient = axios.create({
-  baseURL: "http://localhost:3000", // Set API base URL
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   withCredentials: true, // Include cookies if needed
 });
 
